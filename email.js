@@ -27,18 +27,17 @@ const wfjs_1 = require("@vhidvz/wfjs");
 let namingWorkflow = class namingWorkflow extends wfjs_1.WorkflowJS {
     inputTask(value, data, activity) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('data ', data);
-            console.log('value ', value);
-            data.value = value + ' ' + data.value;
-            console.log('Get Task');
+            console.log('input data  ', data);
+            console.log('input value ', value);
             activity.takeOutgoing();
-            return 'getInput';
+            data.value = value + ' ' + data.value;
+            return value;
         });
     }
     isName(value, data, activity) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('data :', data);
-            console.log('value :', value);
+            console.log('data in Exclusive Event-based Gateway:', data);
+            console.log('value in Exclusive Event-based Gateway:', value);
             if (value === "Ishaan") {
                 activity.takeOutgoing({ name: 'Send Email' });
             }
@@ -51,48 +50,49 @@ let namingWorkflow = class namingWorkflow extends wfjs_1.WorkflowJS {
             else {
                 activity.takeOutgoing({ name: 'Send Invalid' });
             }
+            data.value = value + ' ' + data.value;
         });
     }
     sendSMS(value, data, activity) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('data ', data);
-            console.log('value ', value);
+            console.log('data in SMS ', data);
+            console.log('value in SMS', value);
             data.value = value + ' ' + data.value;
             console.log('SMS: Sent SMS to Vivek Lal.');
-            activity.takeOutgoing();
+            activity.takeOutgoing({ name: 'Message System End' });
         });
     }
     doNothing(value, data, activity) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('data ', data);
-            console.log('value ', value);
+            console.log('data in Do Nothing ', data);
+            console.log('value in Do Nothing', value);
             data.value = value + ' ' + data.value;
             console.log('No action taken for Vivek.');
-            activity.takeOutgoing();
+            activity.takeOutgoing({ name: 'Message System End' });
         });
     }
     sendEmail(value, data, activity) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('data ', data);
-            console.log('value ', value);
+            console.log('data in Send Email ', data);
+            console.log('value in Send Email', value);
             data.value = value + ' ' + data.value;
             console.log('Email: Sent email to Ishaan.');
-            activity.takeOutgoing();
+            activity.takeOutgoing({ name: 'Message System End' });
         });
     }
     sendInvalid(value, data, activity) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('data ', data);
-            console.log('value ', value);
+            console.log('data in Send Invalid', data);
+            console.log('value in Send Invalid', value);
             data.value = value + ' ' + data.value;
             console.log('Invalid data');
-            activity.takeOutgoing();
+            activity.takeOutgoing({ name: 'Message System End' });
         });
     }
     messageSystemEnd(value, data, activity) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('data ', data);
-            console.log('value ', value);
+            console.log('data in End', data);
+            console.log('value in End', value);
             data.value = value + ' ' + data.value;
             console.log('Message System End');
             activity.takeOutgoing();
@@ -163,7 +163,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], namingWorkflow.prototype, "messageSystemEnd", null);
 namingWorkflow = __decorate([
-    (0, common_1.Process)({ name: 'Naming Workflow', path: './src/input.bpmn' })
+    (0, common_1.Process)({ name: 'End User', path: './src/input(2).bpmn' })
 ], namingWorkflow);
 (() => __awaiter(void 0, void 0, void 0, function* () {
     const workflow = namingWorkflow.build();
@@ -171,4 +171,51 @@ namingWorkflow = __decorate([
     const ctx = context.serialize();
     console.debug('\nContext is:', JSON.stringify(ctx, null, 2));
 }))();
+// describe('test workflow engine class', () => {
+//     const path = '../src/input(2).bpmn';
+//     let xml: string;
+//     let schema: BPMNSchema;
+//     let process: BPMNProcess | undefined;
+//     it('should return process', () => {
+//         xml = readFile(path);
+//         schema = parse(xml);
+//         process = getBPMNProcess(schema['bpmn:definitions'], { id: 'Process_1igpwhg' });
+//         expect(process).toBeDefined();
+//     });
+//     it('should return workflow by schema', async () => {
+//         const workflow = WorkflowJS.build();
+//         expect(workflow).toBeDefined();
+//         const { context } = await workflow.execute({
+//             factory: () => new endUser(),
+//             schema: parse(xml)['bpmn:definitions'],
+//         });
+//         expect(context.isPaused()).toBeTruthy();
+//     });
+//     it('should return workflow by path', async () => {
+//         const workflow = WorkflowJS.build();
+//         expect(workflow).toBeDefined();
+//         const { context } = await workflow.execute({
+//             path,
+//             handler: new endUser(),
+//         });
+//         expect(context.isPaused()).toBeTruthy();
+//     });
+//     it('should return workflow by context deserialized', async () => {
+//         const workflow = WorkflowJS.build();
+//         expect(workflow).toBeDefined();
+//         const { context } = await workflow.execute({
+//             path,
+//             handler: new endUser(),
+//         });
+//         expect(context.isPaused()).toBeTruthy();
+//         const ctx = context.serialize({ data: false, value: false });
+//         expect(ctx).toBeDefined();
+//         const exec = await WorkflowJS.build({ context: Context.deserialize(ctx) }).execute({
+//             xml,
+//             handler: new endUser(),
+//             node: { id: 'Activity_1r8gmbw' },
+//         });
+//         expect(exec.context.isTerminated()).toBeTruthy();
+//     });
+// });
 //# sourceMappingURL=email.js.map
